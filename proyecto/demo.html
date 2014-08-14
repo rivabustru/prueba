@@ -1,0 +1,291 @@
+<html>
+    <head>
+        <title>Image Tagging with jQuery and PHP</title>
+        <link href="jquery-ui.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="jquery-ui.min.js"></script>
+        <style>
+        	#seccion{
+                /*border:5px solid #EEE;*/
+                width:100px;
+                min-width:100px;
+                z-index:1000;
+                position:absolute;
+                top:0;
+                display:none;
+            }
+        	#box{
+                border:5px solid #EEE;
+                width:100px;
+                height:100px;
+                min-width:100px;
+                min-height:100px;
+                
+            }
+
+          #target {
+                /*border: 2px solid #848484;*/
+                width: 190px;
+                /*height: 28px;*/
+                margin: 4px;
+                position:relative;  
+                left:-45px;
+
+            }
+
+          #foto {
+                width: 30px;
+                height: 28px;
+                background-color:#5882FA;
+                float:left;
+                border-top: 1px solid #FFFFFF;
+                border-bottom: 1px solid #FFFFFF;
+            }
+
+          #listado {
+                width: 160px;
+                /*height: 28px;*/
+                
+                font-family: Tahoma;
+                font-size: 13px;
+                float:right;
+                
+            }
+
+          .foto ul li{
+                width: 30px;
+                height: 28px;
+            }
+          ul {
+                list-style-type: none;
+                padding: 1px;
+                position: relative;
+                top:-15px;
+            }
+
+          ul li {
+                background-color:#F3F781;
+                border:1px solid #FFFFFF;
+                padding: 1px;
+                height: 28px;
+                margin:1px;
+            }
+
+        </style>
+        <script>
+        	var bandera=true;
+            $(document).ready(function() {
+            	$("#imageMap").click(function(e){
+            		var image_left = $(this).offset().left;
+                    var click_left = e.pageX;
+                    var left_distance = click_left - image_left;
+
+                    var image_top = $(this).offset().top;
+                    var click_top = e.pageY;
+                    var top_distance = click_top - image_top;
+
+                    var mapper_width = $('#box').width();
+                    var imagemap_width = $('#imageMap').width();
+
+                    var mapper_height = $('#box').height();
+                    var imagemap_height = $('#imageMap').height();
+                    //100px+100px=200px
+                    if((top_distance + mapper_height > imagemap_height) && (left_distance + mapper_width > imagemap_width)){
+                        $('#seccion').css("left", (click_left - mapper_width - image_left  ))
+                        .css("top",(click_top - mapper_height - image_top  ))
+                        .css("width","100px")
+                        .css("height","100px")
+                        .show();
+                    }
+                    else if(left_distance + mapper_width > imagemap_width){
+                        $('#seccion').css("left", (click_left - mapper_width - image_left  ))
+                        .css("top",top_distance)
+                        .css("width","100px")
+                        .css("height","100px")
+                        .show();
+			
+                    }
+                    else if(top_distance + mapper_height > imagemap_height){
+                        $('#seccion').css("left", left_distance)
+                        .css("top",(click_top - mapper_height - image_top  ))
+                        .css("width","100px")
+                        .css("height","100px")
+                        .show();
+                    }
+                    else{
+                        $('#seccion').css("left",left_distance)
+                        .css("top",top_distance)
+                        .css("width","100px")
+                        .css("height","100px")
+                        .show();
+                    }
+
+                    $("#seccion").draggable({ containment: "parent" });
+
+					if(bandera){
+						bandera=false;
+	                	friendlist(); 
+					}
+    
+
+            	});
+            
+				
+  				
+            });	<!-- -->
+
+
+			// This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      testAPI();
+    } else if (response.status === 'not_authorized') {
+      // The person is logged into Facebook, but not your app.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into this app.';
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into Facebook.';
+    }
+  }
+
+  
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : 837191196309642,
+    cookie     : true,  // enable cookies to allow the server to access 
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.0' // use version 2.0
+  });
+
+  // Now that we've initialized the JavaScript SDK, we call 
+  // FB.getLoginStatus().  This function gets the state of the
+  // person visiting this page and can return one of three states to
+  // the callback you provide.  They can be:
+  //
+  // 1. Logged into your app ('connected')
+  // 2. Logged into Facebook, but not your app ('not_authorized')
+  // 3. Not logged into Facebook and can't tell if they are logged into
+  //    your app or not.
+  //
+  // These three cases are handled in the callback function.
+
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+      document.getElementById('status').innerHTML =
+        'Thanks for logging in, ' + response.name + '!';
+       // tagPhoto();
+    });
+  }
+
+  function friendlist () {
+/*FB.api('/me/friends', {fields: 'name,id'},function(response) {
+  console.log(response);
+});*/
+
+    FB.api(
+        "/me/friends",{fields:'id,name,picture'},
+        function (response) {
+          if (response && !response.error) {
+            var datos =response.data;
+
+            //$(".photo").append("<img src='"+data.photo+"'/>");
+            //alert(datos[0].name);
+            for(var i=0; i<datos.length; i++){
+              $(".foto ul").append("<li ><img src='"+datos[i].picture.data.url+"' alt='"+datos[i].name+"'/></li>");
+              $(".listado ul").append("<li>"+datos[i].name+"</li>");
+              $(".id").append("<input type='hidden' value='"+datos[i].id+"'>");
+            }
+          }
+        }
+    );
+}
+
+
+
+
+				<!-- -->	
+			$(".tagged").live("mouseover",function(){
+				$(this).find(".box2").css("display","block");
+				$(this).find(".target2").css("display","block");
+				//alert("ver");
+                //if($(this).find(".openDialog").length == 0){
+                    //$(this).find(".tagged_box").css("display","block");
+                    //$(this).css("border","5px solid #EEE");
+
+                    //$(this).find(".tagged_title").css("display","block");
+                //}
+            });
+
+            $(".tagged").live("mouseout",function(){
+                $(this).find(".box2").css("display","none");
+                $(this).find(".target2").css("display","none");
+                /*if($(this).find(".openDialog").length == 0){
+                    $(this).find(".tagged_box").css("display","none");
+                    $(this).css("border","none");
+                    $(this).find(".tagged_title").css("display","none");
+                }*/
+			
+
+            });
+        </script>    
+    </head>
+    <body>
+		<fb:login-button scope="public_profile,email,user_friends,publish_actions" onlogin="checkLoginState();">
+		</fb:login-button>
+
+		<div id="status">
+		</div>
+
+    	<div id='main_panel'>
+    		<div id='image_panel' >
+    			<img src='verdes.jpg' id='imageMap' width="600" />
+    			<div id='seccion' class="tagged">
+                	<div id='box' class="box2" >
+                	</div>
+                	<div id="target" class="target2">
+                    <div id= "foto" class="foto"><ul id="imagen" ></ul></div>                		
+                		<div class="listado" id="listado"><ul></ul></div>
+                    <div class="id"></div>
+                	</div>
+                </div>
+        	</div>
+        	<div><span>Etiquetar</span> <span style="display:none;">Finalizar etiquetado</span></div>
+    	</div>
+    </body>
+</html>
